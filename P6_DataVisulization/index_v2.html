@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+  <style>
+    circle.dimple-series-1 {
+      fill: red;
+    }
+  </style>
+
+  <title> Titanic Data Visulization </title>
+  </head>
+<body>
+
+<div>
+  <h2> Tianic Data Visulization </h2>
+</div>
+
+<p> In this project, different factors that may affect whether a person can survive in the Titanic are explored, such as sex("Sex"), age ("Age"), class level ("Pclass"), embarked place("Embarked"), and number of relatives on board ("SibSp"+"Parch").</p>
+
+<div id="survived_sex">  </div>
+
+<p> From the difference of "Sex", we can see female has a higher survival rate in Titanic.</p>
+
+<div id="survived_age">  </div>
+
+<p> It seem that "Age" doesn't play an important role on the survival rate.</p>
+
+<div id="survived_embark">  </div>
+
+<p> We can see that people embarked from "C" (Cherbourg) has a higher survival rate.</p>
+
+<div id="survived_pclass">  </div>
+
+<p> Different class level has different number of survivors, while high class (Plcass=1) hs higher survival rate. </p>
+
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the CSV file
+    and pass the contents of it to the draw function
+    */
+
+    // plot survived and sex statistics
+    var svg1 = dimple.newSvg("#survived_sex", 600, 400);
+
+    function draw_survived_sex(data){
+          var myChart = new dimple.chart(svg1, data);
+          myChart.addCategoryAxis("x", ["Survived", "Sex"]);
+          myChart.addMeasureAxis("y", "Count");
+          myChart.addSeries("Sex", dimple.plot.bar);
+          myChart.setBounds(60, 30, 510, 330);
+          myChart.addLegend(55, 40, 500, 40, "right");
+          myChart.draw();
+        };
+
+    d3.csv("Titanic_v2.csv",draw_survived_sex);
+
+    // Only age and survived
+    var svg3 = dimple.newSvg("#survived_age", 600, 400);
+
+    function draw_survived_age(data){
+          var myChart = new dimple.chart(svg3, data);
+          var x = myChart.addCategoryAxis("x", ["Survived", "Age"]);
+          x.addOrderRule("Age")
+          myChart.addMeasureAxis("y", "Count");
+          myChart.addSeries(["Age"], dimple.plot.bubble);
+          myChart.setBounds(60, 30, 510, 330);
+          myChart.addLegend(55, 40, 500, 40, "right");
+          myChart.draw();
+        };
+    d3.csv("Titanic_v2.csv",draw_survived_age);
+
+    // Embarked and survived
+    var svg4 = dimple.newSvg("#survived_embark", 600, 400);
+
+    function draw_survived_embark(data){
+          var myChart = new dimple.chart(svg4, data);
+          myChart.addCategoryAxis("x", ["Survived", "Embarked"]);
+          myChart.addMeasureAxis("y", "Count");
+          myChart.addSeries(["Embarked"], dimple.plot.bar);
+          myChart.setBounds(60, 30, 510, 330);
+          myChart.addLegend(55, 40, 500, 40, "right");
+          myChart.draw();
+        };
+    d3.csv("Titanic_v2.csv",draw_survived_embark);
+
+    // Pclass and survived
+    var svg5 = dimple.newSvg("#survived_pclass", 600, 400);
+
+    function draw_survived_pclass(data){
+          var myChart = new dimple.chart(svg5, data);
+          myChart.addCategoryAxis("x", ["Survived", "Pclass"]);
+          myChart.addMeasureAxis("y", "Count");
+          myChart.addSeries(["Pclass"], dimple.plot.bar);
+          myChart.setBounds(60, 30, 510, 330);
+          myChart.addLegend(55, 40, 500, 40, "right");
+          myChart.draw();
+        };
+    d3.csv("Titanic_v2.csv",draw_survived_pclass);
+
+  </script>
+
+</body>
+</html>

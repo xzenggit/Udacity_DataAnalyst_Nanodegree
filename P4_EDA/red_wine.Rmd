@@ -1,0 +1,630 @@
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, messages=FALSE)
+```
+
+Exploratory Data Analysis for Red Wine Quanlity by Xiangming Zeng
+========================================================
+
+# Introduction
+
+In this project, we will do exploratory data analysis using 
+[the Red Wind Quality data set](https://www.google.com/url?q=https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityReds.csv&sa=D&ust=1462848137040000&usg=AFQjCNEMyxizisR-3mRA5V9dlWK2jZM0kw). 
+
+This data set contains contains 1,599 red wines with 11 variables on 
+the chemical properties of the wine. At least 3 wine experts rated the
+quality of each wine, providing a rating between 0 (very bad) and 10 
+(very excellent).This [variable dictionary](https://s3.amazonaws.com/udacity-hosted-downloads/ud651/wineQualityInfo.txt)
+explains the variables in the data set and how the data was collected.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+# Load all of the packages that you end up using
+# in your analysis in this code chunk.
+
+# Notice that the parameter "echo" was set to FALSE for this code chunk.
+# This prevents the code from displaying in the knitted HTML output.
+# You should set echo=FALSE for all code chunks in your file.
+
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Load_the_Data}
+# Load the Data
+data = read.csv(file='wineQualityReds.csv')
+```
+
+# Univariate Plots Section
+
+First, we need to get some basic understanding about the dataset. 
+The dimension of the dataset is:
+```{r echo=FALSE, message=FALSE, warning=FALSE, Print_Dimension}
+dim(data)
+```
+The variables in this data set are:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Print_Column_Names}
+colnames(data)
+```
+
+The strucutre of this data set is as follow:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Print_Data_Structure}
+str(data)
+```
+
+As we can see from the structure of the data set, the `X` variable is the
+index of data set. We also have different quality for the red wine as follow:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Print_Unqiue_Quality}
+unique(data$quality)
+```
+
+The basic statistics of the data set is as follow:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Data_Summary}
+summary(data)
+```
+
+Generally, the fixed acidity (with median 7.90) is larger than the volatile 
+acidity (with median 0.52). The density of red wine lies in a small range, 
+with minimum value of 0.9901, maximum of 1.0037, and mean 0.9967. 
+The alcohol of red wine ranges from 8.40 to 14.90, while the quality 
+ranges from 3 to 8.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Wine_Quality}
+ggplot(data=data, aes(x=quality)) + 
+  geom_bar()
+```
+
+I plot the distribution of red wine quality to see how it looks like.
+
+Most wine falls into quality 5 and 6, and the distribution looks like 
+a normal distribution.
+
+I also plot the distribution of each variables to see if these data
+also follow a normal distribution.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fixed_acidity}
+# plot distribution for different variables
+ggplot(data=data, aes(fixed.acidity)) + 
+  geom_histogram()
+
+```
+
+The distribution of `fixed.acidity` seems normal.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, volatile_acidity}
+ggplot(data=data, aes(volatile.acidity)) + 
+  geom_histogram()
+```
+
+The distribution of `volatile.acidity` also seem normal with a little bit right tail.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, citric_acid}
+ggplot(data=data, aes(citric.acid)) + 
+  geom_histogram()
+```
+
+`citric.acid` is skewed. Most locate in the left side.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, residual_sugar}
+ggplot(data=data, aes(residual.sugar)) + 
+  geom_histogram()
+```
+
+`residual.sugar` is also highly skewed with a long right tail.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, chlorides_plot}
+ggplot(data=data, aes(chlorides)) + 
+  geom_histogram()
+```
+
+`chlorides` has similar distribution as `citric.acid`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, free_sulfur_dioxide}
+ggplot(data=data, aes(free.sulfur.dioxide)) + 
+  geom_histogram()
+```
+
+`free.sulfur.dioxide` is also skewed.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, total_sulfur_dioxide}
+ggplot(data=data, aes(total.sulfur.dioxide)) + 
+  geom_histogram()
+```
+
+`free.sulfur.dioxide` is also skewed.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, density_plot}
+ggplot(data=data, aes(density)) + 
+  geom_histogram()
+```
+
+`density` is normal distribution.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, pH_plot}
+ggplot(data=data, aes(pH)) + 
+  geom_histogram()
+```
+
+`pH` is normal distribution.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, sulphates_plot}
+ggplot(data=data, aes(sulphates)) + 
+  geom_histogram()
+```
+
+`sulphates` has a long right tail.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, alcohol_plot}
+ggplot(data=data, aes(alcohol)) + 
+  geom_histogram()
+```
+
+`alcohol` has a right long tail.
+
+While most variables follow normal distribution, some have long tails, 
+such as `critic.acid`, `total.sulfur.dioxide` and `residual.sugar`. 
+
+For those variables with long tails, I transform them into log scale, 
+and see what their log values look like.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Log_citric_acid}
+# plot distribution for varibles in log scale
+ggplot(data=data, aes(log(citric.acid))) + 
+  geom_histogram()
+```
+
+`log(citric.acid)` doesn't give us a normal distribution.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Log_residual_sugar}
+# plot distribution for varibles in log scale
+ggplot(data=data, aes(log(residual.sugar))) + 
+  geom_histogram()
+```
+
+`log(residual.sugar)` still has a long right tail.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Log_chlorides}
+# plot distribution for varibles in log scale
+ggplot(data=data, aes(log(chlorides))) + 
+  geom_histogram()
+```
+
+`log(chlorides)` seems like a normal distribution.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Log_free_sulfur_dioxide}
+# plot distribution for varibles in log scale
+ggplot(data=data, aes(log(free.sulfur.dioxide))) + 
+  geom_histogram()
+```
+
+`log(free.sulfur.dioxide)` seems normal.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Log_total_sulfur_dioxide}
+# plot distribution for varibles in log scale
+ggplot(data=data, aes(log(total.sulfur.dioxide))) + 
+  geom_histogram()
+```
+
+`log(total.sulfur.dioxide)` seems normal.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Log_alcohol}
+# plot distribution for varibles in log scale
+ggplot(data=data, aes(log(alcohol))) + 
+  geom_histogram()
+```
+
+`log(alcohol)` seems no big difference.
+
+`total.sulfur.dioxide` in log scale show a normal distribution.
+Other do not show significant changes in terms of distribution.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, New_Variables}
+# create new varable "total.acidity" by adding "fixed.acidty" 
+# and "volatile.acidity" together.
+data['total.acidity'] <- data['fixed.acidity'] + data['volatile.acidity']
+ggplot(data=data, aes(total.acidity)) + 
+  geom_histogram()
+```
+
+`total.acidity` seems normal.
+
+# Univariate Analysis
+
+### What is the structure of your dataset?
+
+There are 1,599 wines in the dataset with 13 features (`X`, `fixed.acidity`,
+`volatile.acidity`, `critric.acid`, `residual.sugar`, `chlorides`, 
+`free.sulfur.dioxide`, `total.sulfur.dioxide`, `density`, `pH`, `sulphates`,
+`alcohol`, and `quality`). The variable `X` is the index of the dataset. 
+The `quality` is an factor variable with levels: 3, 4, 5, 6, 7, 8.
+
+Other observations:
+
+* The fixed acidity (with median 7.90) is larger than the volatile acidity
+(with median 0.52). 
+* The density of red wine lies in a small range, with minimum value of 0.9901,
+maximum of 1.0037, and mean 0.9967. 
+* The alcohol of red wine ranges from 8.40 to 14.90.
+
+### What is/are the main feature(s) of interest in your dataset?
+
+The main features in the dataset are `density`, `pH`, and `total.sulfur.dioxide`.
+The `quality` of red wine may be predicted with the main features and some 
+combination of the other variables.
+
+### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+
+`fixed.acidity`, `volatile.acidity`, `sulphates`, `alcohol`, `residual.sugar`, 
+`chlorides` and `total.sulfur.dioxide` may also contribute to the quality
+of red wine. 
+
+### Did you create any new variables from existing variables in the dataset?
+I created a new variable `total.acidity` by adding the `fixed.acidity` and 
+`volatile.acidity` together, because I think the `total.acidity` may better 
+represent the quality of red wine.
+
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+
+Some of the features have long tails. Therefore, I tranformed them 
+(e.g. `total.sulfur.dioxide`) into log scale to see if the log scaled
+variables better follow a normal distribuiton. The reason is that because
+the `quality` variable generally follow a normal distribution, variables
+with normal distribution may be better used to predict the `quality` of red wine.
+
+# Bivariate Plots Section
+
+I would like to see how different variables correlate with each other. 
+So I plot the following correlation figure.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Bivariate_Plots}
+# Show correlation between different variables, exclude the 1st 
+# column becuase it's index.
+new_data = data[, -1]
+
+# Plot the correlations
+library(PerformanceAnalytics)
+chart.Correlation(new_data)
+```
+
+It look likes some variables are well correlated with each other.
+For further analysis, I plot some of them in a single figure, such as 
+`pH` vs `fixed.acidity` and `alchol` vs `quality`. And some of them 
+do show good correlations.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, ph_fixed_acidity}
+# plot two variable relations
+ggplot(data=data, aes(x=pH, y=fixed.acidity)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+`pH` seems to be negatively correlated with `fixed.acidity`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, alcohol_quality}
+ggplot(data=data, aes(x=alcohol, y=quality)) + 
+  geom_jitter(alpha = 1/7)
+```
+
+High `quality` red wine tends to have high `alcohol`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, density_alcohol}
+ggplot(data=data, aes(x=density, y=alcohol)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+High `alcohol` red wine seems to have low `density`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fixed_acidity_density}
+ggplot(data=data, aes(x=fixed.acidity, y=density)) + 
+  geom_point() + 
+  geom_smooth()
+```
+
+`density` is highly correlated with `fixed.acidity`.
+
+From the above plots, we can see the `fixed.acidity` and `pH` seem to be negatively 
+correlated, while `alcohol` and `density` also seem negatively correlated.
+The `density` and `fixed.acidity` have a pretty good positive correlation.
+
+# Bivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
+
+The `fixed.acidity` has a negative correlation with the `pH`, which totally makes sense.
+However, the `fixed.acidity` also has a positive correlation with the `density`. 
+And the `density` is negatively correlated with the `pH`. 
+The `quality` has the highest correlation with the `alcohol`. 
+
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+
+It looks like the `total.acidity` has a very high correlation with the `fixed.acidity`.
+Therefore, we may not need the `total.acidity` variable. 
+
+The `free.sulfur.dioxde` and `total.sulfur.dioxide` seem to correlate very well with 
+a correlation coefficient about 0.67. 
+
+The `fixed.acidity` and `citric.acid` also has a postivie correlation of 0.67.
+
+The `density` is negatively correlated with the `alcohol` with a coefficient of -0.50.
+
+### What was the strongest relationship you found?
+
+Except the variable I added `total.acidity`, the strongest relation is between
+`fixed.acidity` and `pH`, with a correlation coefficient of -0.68.
+
+# Multivariate Plots Section
+
+I start to focus on variables that are correlated and related to the
+quanlity of red wine, such as `alcohol`, `density`, and `pH`. 
+
+I try to plot them together to see if there's any interaction between them,
+and wheter this interaction can affect the quality of red wine.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_Plots}
+# take wine quanlity as factors
+data$quality <- as.factor(data$quality)
+
+# plot multiple variable relations
+ggplot(data=data, aes(x=alcohol, y=density, col=quality)) + 
+  geom_point() + 
+  scale_colour_brewer(palette = "Greens")
+```
+
+High `quality` red wine typically has high `alochol` and low `density`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fixed_acidity_quality_alcohol}
+ggplot(data=data, aes(x=alcohol, y=fixed.acidity, col=quality)) + 
+  geom_point() + 
+  scale_colour_brewer(palette = "Greens")
+```
+
+No obvious relation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE,alcohol_pH_quality}
+ggplot(data=data, aes(x=alcohol, y=pH, col=quality)) + 
+  geom_point() +
+  scale_colour_brewer(palette = "Greens")
+```  
+  
+High `quality` red wine tends to have high `alochol` and low `pH`.
+  
+```{r echo=FALSE, message=FALSE, warning=FALSE, t_sdixoide_alchol_qualiy}  
+ggplot(data=data, aes(x=alcohol, y=total.sulfur.dioxide, col=quality)) + 
+  geom_point() + 
+  scale_colour_brewer(palette = "Greens")
+```
+
+No obvious relation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, pH_density_quality} 
+ggplot(data=data, aes(x=pH, y=density, col=quality)) + 
+  geom_point() +
+  scale_colour_brewer(palette = "Greens")
+```
+
+Low `density` and `pH` tends to have high `quality` red wine.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fixed_acidity_quality} 
+ggplot(data=data, aes(x=pH, y=fixed.acidity, col=quality)) + 
+  geom_point() +
+  scale_colour_brewer(palette = "Greens")
+```
+
+Good correlation between `pH` and `fixed.acidity`. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, four_var_1} 
+ggplot(data=data, aes(x=density, y=fixed.acidity, col=alcohol)) + 
+  geom_jitter() + 
+  scale_colour_distiller(palette = "Spectral") +
+  facet_wrap(~ quality)
+```
+
+High `qualiy` red wine tends to have high `alcohol` and low `density`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, four_var_2}
+ggplot(data=data, aes(x=density, y=alcohol, col=pH)) + 
+  geom_jitter() + scale_colour_distiller(palette = "Spectral") +
+  facet_wrap(~ quality)
+```
+
+High `qualiy` red wine tends to have high `alcohol`, low `density`, and low `pH`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, four_var_3}
+ggplot(data=data, aes(x=density, y=alcohol, col=total.sulfur.dioxide)) + 
+  geom_jitter() + 
+  scale_colour_distiller(palette = "Spectral") +
+  facet_wrap(~ quality)
+```
+
+High `qualiy` red wine tends to low `total.sulfur.dioxide`, low `density`, and high `alcohol`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(data=data, aes(x=density, y=alcohol, col=pH, size=total.sulfur.dioxide)) + 
+  geom_jitter() + 
+  scale_colour_distiller(palette = "Spectral") +
+  facet_wrap(~ quality)
+```
+
+I find that high quality red wines typically have low `density` 
+but high `alcohol`, or high `fixed.acidity` but high `alcohol`, 
+or low `pH` but high `alcohol`, or low `total.sulfur.dioxide` 
+but high `alcohol`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, Multivariate_BoxPlots}
+# Boxplot for different variable ratios to see if they can give better
+# discrimination for red wine quality.
+ggplot(data=data, aes(x=quality, y=alcohol/density)) + 
+  geom_boxplot()
+```
+
+High `quality` red wine tends to have high `alcohol/density` ratio.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, box_1}
+ggplot(data=data, aes(x=quality, y=alcohol/pH)) + 
+  geom_boxplot()
+```
+
+High `quality` red wine tends to have high `alcohol/pH` ratio.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, box_2}
+ggplot(data=data, aes(x=quality, y=alcohol/total.sulfur.dioxide)) + 
+  geom_boxplot()
+```
+
+No obvious relation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, box_3}
+ggplot(data=data, aes(x=quality, y=density/pH)) + 
+  geom_boxplot()
+```
+
+No obvious relation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, box_4}
+ggplot(data=data, aes(x=quality, y=density/log(total.sulfur.dioxide))) + 
+  geom_boxplot()
+```
+
+No obvious relation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, box_5}
+ggplot(data=data, aes(x=quality, y=density/total.sulfur.dioxide)) + 
+  geom_boxplot()
+```
+
+No obvious relation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, box_6}
+ggplot(data=data, aes(x=quality, y=pH/total.sulfur.dioxide)) + 
+  geom_boxplot()
+```
+
+No obvious relation.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, box_7}
+ggplot(data=data, aes(x=quality, y=pH/log(total.sulfur.dioxide))) + 
+  geom_boxplot()
+```
+
+No obvious relation.
+
+The `quality` of red wine can be better distinguished by the `alcohol/pH` 
+ratio as well as `alcohol/density` ratio showing by the distribution and 
+mean values in the boxplots.
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the investigation. Were there features that strengthened each other in terms of looking at your feature(s) of interest?
+
+High quality red wines typically have low `density` but high `alcohol`,
+or high `fixed.acidity` but high `alcohol`, or low `pH` but high `alcohol`,
+or low `total.sulfur.dioxide` but high `alcohol`.
+
+In a word, high quality red wine generally corresponds low `density`, low `pH`, low `total.sulfur.dioxide`, high `alcohol`.
+
+`fixed.acidity` and `pH` tend to weaken each other, which totally makes sense. 
+While `fixed.acidity` and `density` tend to strengthen each other.
+
+### Were there any interesting or surprising interactions between features?
+
+High quality red wine tends to have high `alcohol/pH` and `alcohol/density` ratio, 
+which is very interesting.
+
+------
+
+# Final Plots and Summary
+
+### Plot One
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_One}
+p <- ggplot(data=data, aes(quality)) + 
+  geom_bar(fill='blue')
+p + labs(x='Wine Quanlity (levels: 0-10)', y='Number of Records', 
+         title='Distribution of Red Wine Quality')
+```
+
+### Description One
+The distribution of red wine quality apperas to be normal with most quality
+lie in levels 5 and 6.
+
+### Plot Two
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Two}
+# function for formating facet_wrap titles
+myfunc <- function(var) {
+  result <- paste('Quality level:', as.character(var))
+  return(result)
+}
+
+# plot related variables together
+p <- ggplot(data=data, aes(x=density, y=alcohol, col=pH, size=total.sulfur.dioxide)) + 
+  geom_jitter() + scale_colour_distiller(palette = "GnBu") +
+  facet_wrap(~quality, labeller = labeller(quality = myfunc))
+
+p + labs(x=expression(paste("Density(in g/cm"^{3}, ")")), 
+         y='Alcohol(in %)', 
+         title='Wine Quality Relation with Density, 
+         Alcohol, pH, and Total Sulfur Dioxide')
+```
+
+### Description Two
+The `quality` of red wine is related to the `alcohol`, `density`, `pH` 
+and `total.sulfur.dioxide`. For example, the direct corrlateion between
+`qaulity` and `alcohol` is 0.48, while the correlation coefficients between
+`alcohol` and `density` is -0.50, between `desnity` and `pH` is -0.34,
+between `alcohol` and `total.sulfur.dioxide` is -0.21.
+
+Generally, high quality red wine generally 
+corresponds low `density`, low `pH`, low `total.sulfur.dioxide`, high `alcohol`.
+
+### Plot Three
+```{r echo=FALSE, message=FALSE, warning=FALSE, Plot_Three}
+# Comment this one, because only need three plots.
+# boxplot for alcohol/density
+#p <- ggplot(data=data, aes(x=quality, y=alcohol/density)) +
+#  geom_boxplot()
+#p + labs(x='Wine Quality (levels: 0-10)', y=expression(
+#  paste("Alcohol(in %)/Density(in g/cm"^{3}, ")")), 
+#  title='Boxplot of alcohol/density for Each Red Wine Quality Level')
+
+# boxplot for alcohol/pH
+p <- ggplot(data=data, aes(x=quality, y=alcohol/pH)) + 
+  geom_boxplot()
+p + labs(x='Wine Quality (levels: 0-10)', y='Alcohol(in %)/pH',
+         title='Boxplot of alcohol/pH for Each Red Wine Quality Level')
+```
+
+### Description Three
+
+The `quality` of red wine is more related to the `alcohol/pH` ratio. 
+From the plot, we can see the means of `alcohol/pH` for quality levels 6-8 (about 3.2,
+3.5, and 4.2) genearlly are greater than those of levels 3-5 (about 2.9,
+3.0, and 2.9). Generally, high quality red wine has high `alcohol/pH` ratio.
+
+------
+
+# Reflection
+
+The red wine data set contains contains 1,599 red wines with 11 variables on
+the chemical properties of the wine. At least 3 wine experts rated the quality
+of each wine, providing a rating between 0 (very bad) and 10 (very excellent).
+
+The question I'm trying to answer is what factors can affect the quality of
+red wine. I started by understanding the basic structure and variables of the
+dataset, and then I explored the distributon of different variables in the
+dataset. I found the quality of red wine in the dataset generally follow a
+normal distribution, and many other variables also have the similar 
+distribution, such as `pH`. For some non-nomral distribution variables,
+I even transformed them to log scale to better understand their distribution.
+Some variables in the dataset is correlated, such `fixed.acidity` and `pH`,
+which is totally makes sense. After many explorations with different variables,
+I found the most important variables for the red wine quality are `alcohol`,
+`density`, and `pH`. Through boxplots of `alcohol/pH` and `alcohol/density` 
+ratios for each `quality` level, we can easily tell the relations between 
+these variables. That is, high quality red wine generally has high `alcohol/pH`
+and `alcohol/density` ratios.
+
+For future work, one can use the factors that are important for the red wine 
+quality to build a model and predict the quality of red wine.

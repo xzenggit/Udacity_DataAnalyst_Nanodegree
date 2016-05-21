@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+  <style>
+    circle.dimple-series-1 {
+      fill: red;
+    }
+  </style>
+
+  <title> Titanic Data Visulization </title>
+  </head>
+<body>
+
+<div>
+  <h2> Tianic Data Visulization </h2>
+</div>
+
+<p> Difference of sex on survival status in Titanic</p>
+
+<div id="survived_sex">  </div>
+
+
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the CSV file
+    and pass the contents of it to the draw function
+    */
+
+    function draw_survived_sex(data){
+          var myChart = new dimple.chart(svg, data);
+          myChart.addCategoryAxis("x", ["Survived", "Sex"]);
+          myChart.addMeasureAxis("y", "Count");
+          myChart.addSeries("Sex", dimple.plot.bar);
+          myChart.setBounds(60, 30, 510, 330);
+          myChart.addLegend(55, 40, 500, 40, "right");
+          myChart.draw();
+        };
+
+    var svg = dimple.newSvg("#survived_sex", 600, 400);
+    d3.csv("Titanic_v1.csv",draw_survived_sex);
+
+  </script>
+
+</body>
+</html>

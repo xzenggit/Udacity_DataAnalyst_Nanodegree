@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="http://dimplejs.org/dist/dimple.v2.0.0.min.js"></script>
+  <style>
+    circle.dimple-series-1 {
+      fill: red;
+    }
+  </style>
+
+  <title> Titanic Data Visulization </title>
+  </head>
+<body>
+
+<div>
+  <h2> Tianic Data Visulization </h2>
+</div>
+
+<p> In this project, different factors that may affect whether a person can survive in the Titanic are explored, such as sex("Sex"), class level ("Pclass") and embarked place("Embarked").</p>
+
+<div id="Status_sex" align="center">  </div>
+
+<p> From the difference of "Sex", we can see female has a higher survival rate in Titanic.</p>
+
+<div id="Status_embark" align="center">  </div>
+
+<p> We can see that people embarked from Cherbourg have the highest survival rate, while people embarked from Southampton have the lowest survival rate.</p>
+
+<div id="Status_pclass" align="center">  </div>
+
+<p> Different class levels have different number of survivors, while high class (Plcass=1) has highest survival rate, and low class (Pclass=3) has the lowest survival rate. </p>
+
+<p> The analysis shows that generally people with the features of (female, class 1, and embarked from Cherburg) have a higher survival chance.</p>
+
+<a href="https://www.kaggle.com/c/titanic/data">Data decsription for this visiulization</a>
+
+  <script type="text/javascript">
+  /*
+    Use D3 (not dimple.js) to load the CSV file
+    and pass the contents of it to the draw function
+    */
+
+    // plot Status and sex statistics
+    var svg1 = dimple.newSvg("#Status_sex", 500, 400);
+
+    function draw_Status_sex(data){
+          var myChart = new dimple.chart(svg1, data);
+          myChart.addCategoryAxis("x", ["Sex"]);
+          var y = myChart.addMeasureAxis("y", "Survival_rate_by_sex");
+          y.title = "Survival rate (%)";
+          myChart.addSeries("Sex", dimple.plot.bar);
+          myChart.setBounds(60, 30, 400, 330);
+          myChart.draw();
+        };
+
+    d3.csv("Titanic_final.csv",draw_Status_sex);
+
+    svg1.append("text")
+       .attr("x", (svg1[0][0].clientWidth / 2))
+       .attr("y", 14).attr("text-anchor", "middle")
+       .style("font-size", "13px")
+       .style("font-weight", "bold")
+       .text("Effect of sex on survival rate");
+
+    // Embarked and Status
+    var svg4 = dimple.newSvg("#Status_embark", 600, 400);
+
+    function draw_Status_embark(data){
+          data = dimple.filterData(data,"Embarked", ["Queenstown", "Cherbourg", "Southampton"]);
+          var myChart = new dimple.chart(svg4, data);
+          myChart.addCategoryAxis("x", ["Embarked"]);
+          var y = myChart.addMeasureAxis("y", "Survival_rate_by_embarked");
+          y.title = "Survival rate (%)";
+          y.overrideMax = 80;
+          myChart.addSeries(["Embarked"], dimple.plot.bar);
+          myChart.setBounds(60, 30, 510, 330);
+          myChart.addLegend(55, 40, 500, 40, "right");
+          myChart.draw();
+        };
+    d3.csv("Titanic_final.csv",draw_Status_embark);
+
+    svg4.append("text")
+       .attr("x", (svg4[0][0].clientWidth / 2))
+       .attr("y", 14).attr("text-anchor", "middle")
+       .style("font-size", "13px")
+       .style("font-weight", "bold")
+       .text("Effect of embarked place on survival rate");
+
+    // Pclass and Status
+    var svg5 = dimple.newSvg("#Status_pclass", 600, 400);
+
+    function draw_Status_pclass(data){
+          data = dimple.filterData(data,"Pclass", ["1", "2", "3"]);
+          var myChart = new dimple.chart(svg5, data);
+          var x = myChart.addCategoryAxis("x", ["Pclass"]);
+          x.title = "Passenger class";
+          var y = myChart.addMeasureAxis("y", "Survival_rate_by_class");
+          y.title = "Surival rate (%)";
+          y.overrideMax = 80;
+          myChart.addSeries(["Pclass"], dimple.plot.bar);
+          myChart.setBounds(60, 30, 510, 330);
+          myChart.addLegend(55, 40, 500, 40, "right");
+          myChart.draw();
+        };
+    d3.csv("Titanic_final.csv",draw_Status_pclass);
+
+    svg5.append("text")
+       .attr("x", (svg5[0][0].clientWidth / 2))
+       .attr("y", 14).attr("text-anchor", "middle")
+       .style("font-size", "13px")
+       .style("font-weight", "bold")
+       .text("Effect of passenge class on survival rate");
+  </script>
+
+</body>
+</html>
