@@ -1,9 +1,27 @@
+## Make effective data visulization
+
+Create a data visualization from a data set that tells a story or highlights trends or patterns in the data. Use either dimple.js to create the visualization.
+
+### Why this Project?
+
+This project touches on the overarching attitudes and beliefs important to effective data visualization, such as:
+* visualization is a dialog
+* showcasing and sharing visualization with others
+* visualization is a fluid process that typically requires multiple iterations of improvements
+
+I experience the end-to-end process of creating effective data visualizations and highlighting important information from data that may otherwise be hidden or hard to uncover.
+
+### What I learned
+
+* Demonstrate the ability to choose optimal visual elements to encode data and critically assess the effectiveness of the visualization
+* Communicate a story or finding to the appropriate audience using interactive visualizations
+* Undergo the iterative process of creating a visualization, and build interactive visualizations with dimple.js or d3.js.
 
 ## Summary
 
 This project explores factors that may affect whether a person can survive in the [Titanic event](https://www.kaggle.com/c/titanic). Different factors in the [Titanic dataset](https://www.kaggle.com/c/titanic/data) are analyzed, such as sex("Sex"), class level ("Pclass"), and embarked place("Embarked"). The analysis shows that generally people with the features of (female, class 1, and embarked from Cherburg) has a higher survival chance.
 
-## Design
+### Design
 
 First, I download the [Titanic dataset](https://www.kaggle.com/c/titanic/data) and use the Ipyton Notebook do the exploratory analysis. Following the Kaggle instruction and tutorials, I start to explore the relation between "Sex" and "Survived". For visulization purpose, I add a "Count" column in the dataframe.
 
